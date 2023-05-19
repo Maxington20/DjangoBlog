@@ -1,11 +1,60 @@
-<p>Number of posts: {{ latest_posts.count }}</p>
+<style>
+    .post {
+        margin-bottom: 40px;
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    .post-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .post-date {
+        color: #888;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .post-content {
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+
+    .post-image {
+        margin-bottom: 10px;
+        max-width: 100%;
+        height: auto;
+        border-radius: 5px;
+    }
+</style>
+
+{% extends "blog/base.html" %}
+
+{% block title %}My Blog{% endblock %}
+
+{% block content %}
+
 {% for post in latest_posts %}
-    <div>
-        <h2>{{ post.title }}</h2>
-        <p>{{ post.pub_date|date:"F j, Y, P" }}</p>
-        <img src="{{ post.image_url }}" alt="{{ post.title }}">
-        <div>{{ post.content|safe }}</div>
+    <div class="post">
+        <h2 class="post-title">{{ post.title }}</h2>
+        {% with images=post.image_set.all %}
+            {% if images %}
+                <img class="post-image" src="{{ images.0.url }}" alt="{{ images.0.description }}">
+            {% endif %}
+        {% endwith %}
+        <p class="post-date">{{ post.pub_date|date:"F j, Y, P" }}</p>
+        <div class="post-content">{{ post.content|linebreaksbr|safe }}</div>
+        {% if images|length > 1 %}
+            {% for image in images|slice:"1:" %}
+                <img class="post-image" src="{{ image.url }}" alt="{{ image.description }}">
+            {% endfor %}
+        {% endif %}
     </div>
 {% empty %}
     <p>No posts are available.</p>
 {% endfor %}
+
+{% endblock %}

@@ -1,19 +1,20 @@
 from django.core.management.base import BaseCommand
-from blog.models import Post
+from blog.models import Post, Image
 import openai
 import requests
 from requests_oauthlib import OAuth2Session
 
 # Fetch image function
-def fetch_image(query, access_token):
+def fetch_images(description, access_token, count=5):
     oauth = OAuth2Session(token={"access_token": access_token, "token_type": "Bearer"})
-    response = oauth.get(f"https://api.unsplash.com/search/photos?query={query}&per_page=1")
+    response = oauth.get(f"https://api.unsplash.com/search/photos?query={description}&per_page={count}")
 
     if response.status_code == 200:
         data = response.json()
-        if len(data["results"]) > 0:
-            return data["results"][0]["urls"]["small"]
-    return None
+        results = data.get("results", [])
+        image_data = [{"url": result["urls"]["small"], "description": result["description"]} for result in results]
+        return image_data
+    return []
 
 class Command(BaseCommand):
     help = "Generate a blog post using GPT-4 and Unsplash API"
@@ -25,8 +26,8 @@ class Command(BaseCommand):
         openai.api_key = "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"
         response = openai.Completion.create(
             engine="text-davinci-002",
-            prompt=f"Write a blog post about {title} with relevant images",
-            max_tokens=1500,
+            prompt=f"Write a detailed ~1000 word blog post about {title}",
+            max_tokens=3000,
             n=1,
             stop=None,
             temperature=0.7,
@@ -35,10 +36,16 @@ class Command(BaseCommand):
 
         # Unsplash API with OAuth2
         access_token = "lHr7AT2hT19cbcyIbW_c5kX3PwADHA_QGqczZA1bp6I"
-        image_url = fetch_image(title, access_token)
-
+        description = response.choices[0].text.strip()  # Use the generated content as description
+        image_data = fetch_images(description, access_token, count=5)
         # Create a new post
-        new_post = Post(title=title, content=content, image_url=image_url)
+        new_post = Post(title=title, content=content)
         new_post.save()
+
+        # Add images to the post
+        for data in image_data:
+            print(image_data)
+            image = Image(url=data["url"], description=data["description"], post=new_post)
+            image.save()
 
         self.stdout.write(self.style.SUCCESS("Successfully generated a blog post."))
