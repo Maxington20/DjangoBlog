@@ -28,7 +28,7 @@ class Command(BaseCommand):
         openai.api_key = "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"
         response = openai.Completion.create(
             engine="text-davinci-002",
-            prompt=f"Write a detailed blog post about {title}. It must be at least 1000 words long",
+            prompt=f"Write a detailed blog post about {title}. It must be at least 1000 words long and not repetitive.",
             max_tokens=3000,
             n=1,
             stop=None,
