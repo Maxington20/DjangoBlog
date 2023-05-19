@@ -30,14 +30,11 @@
         }
 
         h1 {
-            font-size: 36px;
-            font-weight: bold;
+            font-family: 'Pacifico', cursive;
+            font-size: 40px;
             color: #333;
             margin: 0;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         nav ul {
@@ -106,7 +103,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>The Once and Future Blog</h1>
+            <h1 class="header-title">The Once and Future Blog</h1>
             <nav>
                 <ul>
                     <li><a href="{% url 'blog:index' %}" {% if request.path == '/' %}class="active-link"{% endif %}>Home</a></li>

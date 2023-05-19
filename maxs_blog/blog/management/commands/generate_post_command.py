@@ -22,11 +22,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         title = input("Enter the blog post title: ")
 
+        image_description = input("Enter the image description: ")
+
         # GPT-4 API
         openai.api_key = "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"
         response = openai.Completion.create(
             engine="text-davinci-002",
-            prompt=f"Write a detailed ~1000 word blog post about {title}",
+            prompt=f"Write a detailed blog post about {title}. It must be at least 1000 words long",
             max_tokens=3000,
             n=1,
             stop=None,
@@ -36,8 +38,8 @@ class Command(BaseCommand):
 
         # Unsplash API with OAuth2
         access_token = "lHr7AT2hT19cbcyIbW_c5kX3PwADHA_QGqczZA1bp6I"
-        description = response.choices[0].text.strip()  # Use the generated content as description
-        image_data = fetch_images(description, access_token, count=5)
+        #description = response.choices[0].text.strip()  # Use the generated content as description
+        image_data = fetch_images(image_description, access_token, count=5)
         # Create a new post
         new_post = Post(title=title, content=content)
         new_post.save()
