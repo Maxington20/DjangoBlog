@@ -5,13 +5,18 @@ from .models import Post
 import openai
 import requests
 from requests_oauthlib import OAuth2Session
+from django.core.paginator import Paginator
 
 def index(request):
     latest_posts = Post.objects.order_by('-pub_date')
-    print(f"Number of posts: {len(latest_posts)}")
-    for post in latest_posts:
-        print(f"Post title: {post.title}")
-    context = {'latest_posts': latest_posts}
+    paginator = Paginator(latest_posts, 5)  # Display 5 posts per page
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+    }
     return render(request, 'blog/index.html', context)
 
 def fetch_image(query, access_token):

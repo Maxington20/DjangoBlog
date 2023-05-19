@@ -1,60 +1,136 @@
-<style>
-    .post {
-        margin-bottom: 40px;
-        border: 1px solid #ccc;
-        padding: 20px;
-        border-radius: 5px;
-    }
-
-    .post-title {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-
-    .post-date {
-        color: #888;
-        font-size: 14px;
-        margin-bottom: 10px;
-    }
-
-    .post-content {
-        margin-bottom: 20px;
-        line-height: 1.6;
-    }
-
-    .post-image {
-        margin-bottom: 10px;
-        max-width: 100%;
-        height: auto;
-        border-radius: 5px;
-    }
-</style>
-
 {% extends "blog/base.html" %}
 
 {% block title %}My Blog{% endblock %}
 
-{% block content %}
+{% block styles %}
+    <style>
+        body {
+            background-color: #f4f0ea;
+            color: #444;
+            font-family: 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+        }
 
-{% for post in latest_posts %}
-    <div class="post">
-        <h2 class="post-title">{{ post.title }}</h2>
-        {% with images=post.image_set.all %}
-            {% if images %}
-                <img class="post-image" src="{{ images.0.url }}" alt="{{ images.0.description }}">
+        .post {
+            margin-bottom: 40px;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .post-date {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .post-content {
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .post-image {
+            margin-bottom: 10px;
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination-link {
+            display: inline-block;
+            padding: 6px 12px;
+            color: #333;
+            text-decoration: none;
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination-link:hover {
+            background-color: #ddd;
+        }
+
+        .current-page {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* Additional styles for a more interesting look */
+        .post:hover .post-image {
+            transform: scale(1.05);
+        }
+
+        .post:hover .post-title {
+            color: #ff7f50;
+        }
+
+        .pagination-link:first-child {
+            margin-left: 0;
+        }
+
+        .pagination-link:last-child {
+            margin-right: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% for post in page_obj %}
+        <div class="post">
+            <h2 class="post-title">{{ post.title }}</h2>
+            {% with images=post.image_set.all %}
+                {% if images %}
+                    <img class="post-image" src="{{ images.0.url }}" alt="{{ images.0.description }}">
+                {% endif %}
+            {% endwith %}
+            <p class="post-date">{{ post.pub_date|date:"F j, Y, P" }}</p>
+            <div class="post-content">{{ post.content|linebreaksbr|safe }}</div>
+            {% if images|length > 1 %}
+                {% for image in images|slice:"1:" %}
+                    <img class="post-image" src="{{ image.url }}" alt="{{ image.description }}">
+                {% endfor %}
             {% endif %}
-        {% endwith %}
-        <p class="post-date">{{ post.pub_date|date:"F j, Y, P" }}</p>
-        <div class="post-content">{{ post.content|linebreaksbr|safe }}</div>
-        {% if images|length > 1 %}
-            {% for image in images|slice:"1:" %}
-                <img class="post-image" src="{{ image.url }}" alt="{{ image.description }}">
-            {% endfor %}
+        </div>
+    {% empty %}
+        <p>No posts are available.</p>
+    {% endfor %}
+
+    <!-- Pagination links -->
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a class="pagination-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span class="pagination-link current-page">{{ num }}</span>
+            {% else %}
+                <a class="pagination-link" href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a class="pagination-link" href="?page={{ page_obj.next_page_number }}">next</a>
         {% endif %}
     </div>
-{% empty %}
-    <p>No posts are available.</p>
-{% endfor %}
-
 {% endblock %}
