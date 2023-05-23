@@ -2,22 +2,53 @@
 
 {% block title %}{{ post.title }} - My Blog{% endblock %}
 
+{% block styles %}
+    <style>
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        .navigation-link {
+            color: #ff7f50;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navigation-link:hover {
+            background-color: #ddd;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
     <div class="post">
         <h2 class="selected-post-title">{{ post.title }}</h2>
         <p class="post-date">{{ post.pub_date|date:"F j, Y, P" }}</p>
+        {% with images=post.image_set.all %}
+        {% if images %}
+            <img class="post-image" src="{{ images.0.url }}" alt="{{ images.0.description }}">
+        {% endif %}
+    {% endwith %}
         <div class="post-content">{{ post.content|linebreaksbr|safe }}</div>
     </div>
 
     <div class="navigation">
         {% if previous_post %}
-            <a href="{% url 'blog:post_detail' previous_post.slug %}">Previous Post</a>
+            <a class="navigation-link" href="{% url 'blog:post_detail' previous_post.slug %}">Previous Post</a>
         {% endif %}
         
-        <a href="{% url 'blog:index' %}">Back to Home</a>
+        <a class="navigation-link" href="{% url 'blog:index' %}">Back to Home</a>
         
         {% if next_post %}
-            <a href="{% url 'blog:post_detail' next_post.slug %}">Next Post</a>
+            <a class="navigation-link" href="{% url 'blog:post_detail' next_post.slug %}">Next Post</a>
         {% endif %}
     </div>
 {% endblock %}
