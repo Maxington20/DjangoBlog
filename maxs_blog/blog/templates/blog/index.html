@@ -5,7 +5,6 @@
 {% block styles %}
     <style>
         body {
-            background-color: #f4f0ea;
             color: #444;
             font-family: 'Georgia', serif;
             margin: 0;
@@ -142,10 +141,9 @@
             {% endwith %}
             <p class="post-date">{{ post.pub_date|date:"F j, Y, P" }}</p>
             <div class="post-content{% if post.content|wordcount > 50 %} expand{% endif %}">{{ post.content|truncatewords:50|linebreaksbr|safe }}</div>
-            {% if post.content|wordcount > 50 %}
-                <span class="read-more">Read More</span>
-                <div class="full-content" style="display: none;">{{ post.content|linebreaksbr|safe }}</div>
-            {% endif %}
+            
+            <a href="{% url 'blog:post_detail' slug=post.slug %}" class="read-more">Read More</a>
+            
             {% if images|length > 1 %}
                 {% for image in images|slice:"1:" %}
                     <img class="post-image" src="{{ image.url }}" alt="{{ image.description }}">
@@ -174,30 +172,4 @@
             <a class="pagination-link" href="?page={{ page_obj.next_page_number }}">next</a>
         {% endif %}
     </div>
-
-    <script>
-        // Function to toggle expand/collapse of post content
-        function toggleExpandContent(event) {
-            const readMoreButton = event.target;
-            const post = readMoreButton.closest(".post");
-            const content = post.querySelector(".post-content");
-            const fullContent = post.querySelector(".full-content");
-
-            if (content.classList.contains("expand")) {
-                content.classList.remove("expand");
-                fullContent.style.display = "none";
-                readMoreButton.textContent = "Read More";
-            } else {
-                content.classList.add("expand");
-                fullContent.style.display = "block";
-                readMoreButton.textContent = "Read Less";
-            }
-        }
-
-        // Add event listeners to read more buttons
-        const readMoreButtons = document.querySelectorAll(".read-more");
-        readMoreButtons.forEach(function (button) {
-            button.addEventListener("click", toggleExpandContent);
-        });
-    </script>
 {% endblock %}

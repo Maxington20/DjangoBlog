@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .models import Post
@@ -76,3 +76,13 @@ def generate_post(request=None, title=None):
         return HttpResponseRedirect(reverse('blog:index'))
 
     return
+
+def post_detail(request, slug):
+    try:
+        post = get_object_or_404(Post, slug=slug)
+        previous_post = Post.objects.filter(pub_date__lt=post.pub_date).order_by('-pub_date').first()
+        next_post = Post.objects.filter(pub_date__gt=post.pub_date).order_by('pub_date').first()
+    except Post.DoesNotExist:
+        return render(request, 'blog/post_not_found.html')
+
+    return render(request, 'blog/post_detail.html', {'post': post, 'previous_post': previous_post, 'next_post': next_post})

@@ -1,0 +1,23 @@
+{% extends "blog/base.html" %}
+
+{% block title %}{{ post.title }} - My Blog{% endblock %}
+
+{% block content %}
+    <div class="post">
+        <h2 class="selected-post-title">{{ post.title }}</h2>
+        <p class="post-date">{{ post.pub_date|date:"F j, Y, P" }}</p>
+        <div class="post-content">{{ post.content|linebreaksbr|safe }}</div>
+    </div>
+
+    <div class="navigation">
+        {% if previous_post %}
+            <a href="{% url 'blog:post_detail' previous_post.slug %}">Previous Post</a>
+        {% endif %}
+        
+        <a href="{% url 'blog:index' %}">Back to Home</a>
+        
+        {% if next_post %}
+            <a href="{% url 'blog:post_detail' next_post.slug %}">Next Post</a>
+        {% endif %}
+    </div>
+{% endblock %}
