@@ -20,6 +20,7 @@
             padding: 8px 16px;
             border-radius: 4px;
             transition: background-color 0.3s ease;
+            font-weight: bold;
         }
 
         .navigation-link:hover {
@@ -31,12 +32,12 @@
 {% block content %}
     <div class="post">
         <h2 class="selected-post-title">{{ post.title }}</h2>
-        <p class="post-date">{{ post.pub_date|date:"F j, Y, P" }}</p>
         {% with images=post.image_set.all %}
-        {% if images %}
-            <img class="post-image" src="{{ images.0.url }}" alt="{{ images.0.description }}">
-        {% endif %}
-    {% endwith %}
+            {% if images %}
+                <img class="post-image" src="{{ images.0.url }}" alt="{{ images.0.description }}">
+            {% endif %}
+        {% endwith %}
+        <p class="post-date">{{ post.pub_date|date:"F j, Y, P" }}</p>     
         <div class="post-content">{{ post.content|linebreaksbr|safe }}</div>
     </div>
 
