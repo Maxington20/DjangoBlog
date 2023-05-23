@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .models import Post
@@ -6,6 +6,9 @@ import openai
 import requests
 from requests_oauthlib import OAuth2Session
 from django.core.paginator import Paginator
+from django.conf import settings
+from django.contrib import messages
+from django.core.mail import send_mail
 
 def index(request):
     latest_posts = Post.objects.order_by('-pub_date')
@@ -86,3 +89,32 @@ def post_detail(request, slug):
         return render(request, 'blog/post_not_found.html')
 
     return render(request, 'blog/post_detail.html', {'post': post, 'previous_post': previous_post, 'next_post': next_post})
+
+
+
+def contact(request):
+    return render(request, 'blog/contact.html')
+
+
+
+def send_message(request):
+    if request.method == 'POST':
+        name = request.POST['name']
+        email = request.POST['email']
+        message = request.POST['message']
+
+        # Send the email
+        subject = f'New message from {name}'
+        body = f'Email: {email}\n\nMessage: {message}'
+        sender_email = settings.DEFAULT_FROM_EMAIL
+        recipient_email = 'max.herrington@gmail.com'  # Replace with your email address
+
+        try:
+            send_mail(subject, body, sender_email, [recipient_email])
+            messages.success(request, 'Your message has been sent. Thank you!')
+        except Exception:
+            messages.error(request, 'An error occurred while sending the message. Please try again later.')
+
+        return redirect('blog:contact')
+
+    return redirect('blog:index')

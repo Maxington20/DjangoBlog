@@ -136,7 +136,7 @@
                 <ul>
                     <li><a href="{% url 'blog:index' %}" {% if request.path == '/' %}class="active-link"{% endif %}>Blog</a></li>
                     <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <li><a href="{% url 'blog:contact' %}" {% if request.path == '/contact/' %}class="active-link"{% endif %}>Contact</a></li>
                     <!-- Add more navigation links as needed -->
                 </ul>
             </nav>
