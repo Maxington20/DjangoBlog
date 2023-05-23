@@ -134,9 +134,9 @@
             <h1 class="header-title">The Once and Future Blog</h1>
             <nav>
                 <ul>
-                    <li><a href="{% url 'blog:index' %}" {% if request.path == '/' %}class="active-link"{% endif %}>Home</a></li>
-                    <li><a href="#">Fantasy</a></li>
-                    <li><a href="#">Sci-fi</a></li>
+                    <li><a href="{% url 'blog:index' %}" {% if request.path == '/' %}class="active-link"{% endif %}>Blog</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
                     <!-- Add more navigation links as needed -->
                 </ul>
             </nav>
@@ -152,7 +152,7 @@
         </div>
 
         <footer>
-            <p>&copy; {{ current_year }} My Blog. All rights reserved.</p>
+            <p>&copy; {{ current_year }} The Once and Future Blog. All rights reserved.</p>
         </footer>
     </div>
 
