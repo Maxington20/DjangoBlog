@@ -3,6 +3,7 @@ from blog.models import Post, Image
 import openai
 import requests
 from requests_oauthlib import OAuth2Session
+from maxs_blog.credentials import ACCESS_TOKEN, API_KEY 
 
 # Fetch image function
 def fetch_images(description, access_token, count=5):
@@ -25,10 +26,10 @@ class Command(BaseCommand):
         image_description = input("Enter the image description: ")
 
         # GPT-4 API
-        openai.api_key = "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"
+        openai.api_key = API_KEY
         response = openai.Completion.create(
             engine="text-davinci-002",
-            prompt=f"Write a detailed blog post about {title}. It must be at least 1000 words long and not repetitive.",
+            prompt=f"Write a detailed blog post about {title}. It must be at least 500 words long and not repetitive.",
             max_tokens=3000,
             n=1,
             stop=None,
@@ -36,10 +37,9 @@ class Command(BaseCommand):
         )
         content = response.choices[0].text.strip()
 
-        # Unsplash API with OAuth2
-        access_token = "lHr7AT2hT19cbcyIbW_c5kX3PwADHA_QGqczZA1bp6I"
+        
         #description = response.choices[0].text.strip()  # Use the generated content as description
-        image_data = fetch_images(image_description, access_token, count=5)
+        image_data = fetch_images(image_description, ACCESS_TOKEN, count=5)
         # Create a new post
         new_post = Post(title=title, content=content)
         new_post.save()

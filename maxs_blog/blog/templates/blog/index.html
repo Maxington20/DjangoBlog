@@ -115,7 +115,7 @@
         <div class="post">
             <h2 class="post-title">{{ post.title }}</h2>
             {% with images=post.image_set.all %}
-                {% if images %}
+                {% if images %}    
                     <img class="post-image" src="{{ images.0.url }}" alt="{{ images.0.description }}">
                 {% endif %}
             {% endwith %}
